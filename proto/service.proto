@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package service;
+
+service Service{
+    rpc Connect(ConnectRequest) returns (ConnectReply){}
+}
+
+message ConnectRequest{
+    string name = 1;
+}
+
+message ConnectReply{
+    string message = 1;
+}
