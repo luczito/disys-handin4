@@ -2,7 +2,7 @@ package main
 
 import (
 	api "github.com/hashicorp/consul/api"
-	service "github.com/luczito/disys-handin4/proto"
+	service "github.com/luczito/disys-handin4/service"
 )
 
 type node struct {
