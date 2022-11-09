@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package service;
+package main;
 
 service Service{
     rpc Connect(ConnectRequest) returns (ConnectReply){}
