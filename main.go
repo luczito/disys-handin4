@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	"os"
 	"strconv"
+	"time"
 
 	token "github.com/luczito/disys-handin4/grpc"
 	"google.golang.org/grpc"
@@ -73,7 +75,15 @@ func main() {
 		c := token.NewRingClient(conn)
 		n.clients[port] = c
 	}
-	n.tokenCheck()
+	for {
+		if (rand.Intn(10-1) + 1) == 1 {
+			n.requestAccess()
+		}
+		n.tokenCheck()
+		time.Sleep(time.Second * 2)
+		n.sendToken()
+	}
+
 }
 
 func (n *node) requestAccess() {
@@ -81,16 +91,16 @@ func (n *node) requestAccess() {
 }
 
 func (n *node) tokenCheck() {
-	for {
-		if n.hasToken == true {
-			log.Printf("%v: has the token", n.id)
-			if n.requestAcc != true {
-				log.Printf("%v: is passing the token on", n.id)
-				n.neighbor.hasToken = true
-				n.hasToken = false
-			} else {
-				n.criticalService()
+	if n.hasToken {
+		log.Printf("%v: has the token", n.id)
+		if !n.requestAcc {
+			log.Printf("%v: is passing the token on", n.id)
+			send := &token.Send{
+				Access: true,
 			}
+			n.Ring(n.ctx, send)
+		} else {
+			n.criticalService()
 		}
 	}
 }
@@ -98,4 +108,24 @@ func (n *node) tokenCheck() {
 func (n *node) criticalService() {
 	log.Printf("%v: has access to the critical server", n.id)
 	fmt.Println("Critical service accessed by %v", n.id)
+}
+
+func (n *node) recieve(ctx context.Context, req *token.Send) (*token.Ack, error) {
+	token_ := req.Access
+	n.hasToken = token_
+	log.Printf("%v recieved token", n.id)
+
+	ack := &token.Ack{
+		Reply: "Recieved token",
+	}
+	return ack, nil
+}
+
+func (n *node) sendToken() {
+	req := &token.Send{Access: n.hasToken}
+	reply, err := n.neighbor.Ring(n.ctx, req)
+	if err != nil {
+		log.Fatalf("Unable to send token")
+	}
+	log.Printf("%v sent token and got reply: %v", reply)
 }
