@@ -1,17 +1,16 @@
 syntax = "proto3";
 
-package ping;
-option go_package = "https://github.com/NaddiNadja/peer-to-peer;ping";
+package token;
+option go_package = "https://github.com/luczito/disys-handin4;token";
 
-
-service Ping {
-    rpc ping (Request) returns (Reply) {}
+service Ring{
+    rpc ring(Send) returns (Ack){}
 }
 
-message Request {
-    int32 id = 1;
+message Send{
+    bool access = 1;
 }
 
-message Reply {
-    int32 amount = 1;
+message Ack{
+    string reply = 1;
 }

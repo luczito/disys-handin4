@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"log"
@@ -9,24 +8,35 @@ import (
 	"os"
 	"strconv"
 
-	ping "github.com/NaddiNadja/peer-to-peer/grpc"
+	token "github.com/luczito/disys-handin4/grpc"
 	"google.golang.org/grpc"
 )
+
+type node struct {
+	token.UnimplementedRingServer
+	id         int32 //port
+	clients    map[int32]token.RingClient
+	ctx        context.Context
+	hasToken   bool
+	neighbor   *node
+	requestAcc bool
+}
 
 func main() {
 	//set port for node in commandline
 	arg1, _ := strconv.ParseInt(os.Args[1], 10, 32)
+	arg2, _ := strconv.ParseBool(os.Args[2])
 	ownPort := int32(arg1) + 5000
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	//make a node
-	p := &peer{
-		id:            ownPort,
-		amountOfPings: make(map[int32]int32),
-		clients:       make(map[int32]ping.PingClient),
-		ctx:           ctx,
+	n := &node{
+		id:         ownPort,
+		clients:    make(map[int32]token.RingClient),
+		ctx:        ctx,
+		hasToken:   arg2,
+		requestAcc: false,
 	}
 
 	// Create listener tcp on port ownPort
@@ -36,7 +46,7 @@ func main() {
 	}
 	//register server
 	grpcServer := grpc.NewServer()
-	ping.RegisterPingServer(grpcServer, p)
+	token.RegisterRingServer(grpcServer, n)
 
 	//serve server
 	go func() {
@@ -60,52 +70,32 @@ func main() {
 			log.Fatalf("Could not connect: %s", err)
 		}
 		defer conn.Close()
-		c := ping.NewPingClient(conn)
-		p.clients[port] = c
+		c := token.NewRingClient(conn)
+		n.clients[port] = c
 	}
-
-	//scanner for commandline
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		p.sendPingToAll()
-	}
+	n.tokenCheck()
 }
 
-// node struct
-type peer struct {
-	ping.UnimplementedPingServer
-	id            int32
-	amountOfPings map[int32]int32
-	clients       map[int32]ping.PingClient
-	ctx           context.Context
+func (n *node) requestAccess() {
+	n.requestAcc = true
 }
 
-// ping function
-func (p *peer) Ping(ctx context.Context, req *ping.Request) (*ping.Reply, error) {
-	id := req.Id
-	p.amountOfPings[id] += 1
-
-	rep := &ping.Reply{Amount: p.amountOfPings[id]}
-	return rep, nil
-}
-
-// ping all other nodes function.
-func (p *peer) sendPingToAll() {
-	request := &ping.Request{Id: p.id}
-	for id, client := range p.clients {
-		reply, err := client.Ping(p.ctx, request)
-		if err != nil {
-			fmt.Println("something went wrong")
+func (n *node) tokenCheck() {
+	for {
+		if n.hasToken == true {
+			log.Printf("%v: has the token", n.id)
+			if n.requestAcc != true {
+				log.Printf("%v: is passing the token on", n.id)
+				n.neighbor.hasToken = true
+				n.hasToken = false
+			} else {
+				n.criticalService()
+			}
 		}
-		fmt.Printf("Got reply from id %v: %v\n", id, reply.Amount)
 	}
 }
 
-//critical service method, just needs to print something indicating what node has access.
-
-//add a boolean to all nodes to see if access is gained or not, this bool will only be true for one node at a time, and will be passed on based on a timer.
-//add neighbors to each node (like the philosophers assignment)
-
-//request access method, so a node can request access to the critical service.
-
-//list of all nodes who have requested access, if the node which currently holds true bool, access critical system and remove from list. then give the bool to the neighbor.
+func (n *node) criticalService() {
+	log.Printf("%v: has access to the critical server", n.id)
+	fmt.Println("Critical service accessed by %v", n.id)
+}

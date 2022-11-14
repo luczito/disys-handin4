@@ -1,6 +1,6 @@
-module github.com/NaddiNadja/peer-to-peer
+module github.com/luczito/disys-handin4
 
-go 1.17
+go 1.19
 
 require (
 	google.golang.org/grpc v1.50.1
