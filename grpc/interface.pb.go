@@ -20,16 +20,16 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Send struct {
+type Request struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Access bool `protobuf:"varint,1,opt,name=access,proto3" json:"access,omitempty"`
+	Id int32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
-func (x *Send) Reset() {
-	*x = Send{}
+func (x *Request) Reset() {
+	*x = Request{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_grpc_interface_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -37,13 +37,13 @@ func (x *Send) Reset() {
 	}
 }
 
-func (x *Send) String() string {
+func (x *Request) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Send) ProtoMessage() {}
+func (*Request) ProtoMessage() {}
 
-func (x *Send) ProtoReflect() protoreflect.Message {
+func (x *Request) ProtoReflect() protoreflect.Message {
 	mi := &file_grpc_interface_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,30 +55,66 @@ func (x *Send) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Send.ProtoReflect.Descriptor instead.
-func (*Send) Descriptor() ([]byte, []int) {
+// Deprecated: Use Request.ProtoReflect.Descriptor instead.
+func (*Request) Descriptor() ([]byte, []int) {
 	return file_grpc_interface_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Send) GetAccess() bool {
+func (x *Request) GetId() int32 {
 	if x != nil {
-		return x.Access
+		return x.Id
 	}
-	return false
+	return 0
+}
+
+type Reply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *Reply) Reset() {
+	*x = Reply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_grpc_interface_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Reply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Reply) ProtoMessage() {}
+
+func (x *Reply) ProtoReflect() protoreflect.Message {
+	mi := &file_grpc_interface_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Reply.ProtoReflect.Descriptor instead.
+func (*Reply) Descriptor() ([]byte, []int) {
+	return file_grpc_interface_proto_rawDescGZIP(), []int{1}
 }
 
 type Ack struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
-
-	Reply string `protobuf:"bytes,1,opt,name=reply,proto3" json:"reply,omitempty"`
 }
 
 func (x *Ack) Reset() {
 	*x = Ack{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_grpc_interface_proto_msgTypes[1]
+		mi := &file_grpc_interface_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -91,7 +127,7 @@ func (x *Ack) String() string {
 func (*Ack) ProtoMessage() {}
 
 func (x *Ack) ProtoReflect() protoreflect.Message {
-	mi := &file_grpc_interface_proto_msgTypes[1]
+	mi := &file_grpc_interface_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -104,28 +140,62 @@ func (x *Ack) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Ack.ProtoReflect.Descriptor instead.
 func (*Ack) Descriptor() ([]byte, []int) {
-	return file_grpc_interface_proto_rawDescGZIP(), []int{1}
+	return file_grpc_interface_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *Ack) GetReply() string {
-	if x != nil {
-		return x.Reply
+type AckReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *AckReply) Reset() {
+	*x = AckReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_grpc_interface_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
 	}
-	return ""
+}
+
+func (x *AckReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AckReply) ProtoMessage() {}
+
+func (x *AckReply) ProtoReflect() protoreflect.Message {
+	mi := &file_grpc_interface_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AckReply.ProtoReflect.Descriptor instead.
+func (*AckReply) Descriptor() ([]byte, []int) {
+	return file_grpc_interface_proto_rawDescGZIP(), []int{3}
 }
 
 var File_grpc_interface_proto protoreflect.FileDescriptor
 
 var file_grpc_interface_proto_rawDesc = []byte{
 	0x0a, 0x14, 0x67, 0x72, 0x70, 0x63, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x66, 0x61, 0x63, 0x65,
-	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x1e, 0x0a,
-	0x04, 0x53, 0x65, 0x6e, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x1b, 0x0a,
-	0x03, 0x41, 0x63, 0x6b, 0x12, 0x14, 0x0a, 0x05, 0x72, 0x65, 0x70, 0x6c, 0x79, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x05, 0x72, 0x65, 0x70, 0x6c, 0x79, 0x32, 0x29, 0x0a, 0x04, 0x52, 0x69,
-	0x6e, 0x67, 0x12, 0x21, 0x0a, 0x04, 0x72, 0x69, 0x6e, 0x67, 0x12, 0x0b, 0x2e, 0x74, 0x6f, 0x6b,
-	0x65, 0x6e, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x1a, 0x0a, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e,
-	0x41, 0x63, 0x6b, 0x22, 0x00, 0x42, 0x30, 0x5a, 0x2e, 0x68, 0x74, 0x74, 0x70, 0x73, 0x3a, 0x2f,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x19, 0x0a,
+	0x07, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x69, 0x64, 0x22, 0x07, 0x0a, 0x05, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x05, 0x0a, 0x03, 0x41, 0x63, 0x6b, 0x22, 0x0a, 0x0a, 0x08, 0x41, 0x63, 0x6b, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x32, 0x5f, 0x0a, 0x04, 0x52, 0x69, 0x6e, 0x67, 0x12, 0x2d, 0x0a, 0x0d,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x12, 0x0e, 0x2e,
+	0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0a, 0x2e,
+	0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x41, 0x63, 0x6b, 0x22, 0x00, 0x12, 0x28, 0x0a, 0x05, 0x72,
+	0x65, 0x70, 0x6c, 0x79, 0x12, 0x0c, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x1a, 0x0f, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x41, 0x63, 0x6b, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x22, 0x00, 0x42, 0x30, 0x5a, 0x2e, 0x68, 0x74, 0x74, 0x70, 0x73, 0x3a, 0x2f,
 	0x2f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6c, 0x75, 0x63, 0x7a,
 	0x69, 0x74, 0x6f, 0x2f, 0x64, 0x69, 0x73, 0x79, 0x73, 0x2d, 0x68, 0x61, 0x6e, 0x64, 0x69, 0x6e,
 	0x34, 0x3b, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
@@ -143,16 +213,20 @@ func file_grpc_interface_proto_rawDescGZIP() []byte {
 	return file_grpc_interface_proto_rawDescData
 }
 
-var file_grpc_interface_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_grpc_interface_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_grpc_interface_proto_goTypes = []interface{}{
-	(*Send)(nil), // 0: token.Send
-	(*Ack)(nil),  // 1: token.Ack
+	(*Request)(nil),  // 0: token.Request
+	(*Reply)(nil),    // 1: token.Reply
+	(*Ack)(nil),      // 2: token.Ack
+	(*AckReply)(nil), // 3: token.AckReply
 }
 var file_grpc_interface_proto_depIdxs = []int32{
-	0, // 0: token.Ring.ring:input_type -> token.Send
-	1, // 1: token.Ring.ring:output_type -> token.Ack
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	0, // 0: token.Ring.RequestAccess:input_type -> token.Request
+	1, // 1: token.Ring.reply:input_type -> token.Reply
+	2, // 2: token.Ring.RequestAccess:output_type -> token.Ack
+	3, // 3: token.Ring.reply:output_type -> token.AckReply
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -165,7 +239,7 @@ func file_grpc_interface_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_grpc_interface_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Send); i {
+			switch v := v.(*Request); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -177,7 +251,31 @@ func file_grpc_interface_proto_init() {
 			}
 		}
 		file_grpc_interface_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Reply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_grpc_interface_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Ack); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_grpc_interface_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AckReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -195,7 +293,7 @@ func file_grpc_interface_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_grpc_interface_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

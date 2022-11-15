@@ -4,13 +4,14 @@ package token;
 option go_package = "https://github.com/luczito/disys-handin4;token";
 
 service Ring{
-    rpc ring(Send) returns (Ack){}
+    rpc RequestAccess(Request) returns (Ack){}
+    rpc reply(Reply) returns (AckReply){}
 }
 
-message Send{
-    bool access = 1;
+message Request{
+    int32 id = 1;
 }
 
-message Ack{
-    string reply = 1;
-}
+message Reply{}
+message Ack{}
+message AckReply{}

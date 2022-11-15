@@ -18,7 +18,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RingClient interface {
-	Ring(ctx context.Context, in *Send, opts ...grpc.CallOption) (*Ack, error)
+	RequestAccess(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Ack, error)
+	Reply(ctx context.Context, in *Reply, opts ...grpc.CallOption) (*AckReply, error)
 }
 
 type ringClient struct {
@@ -29,9 +30,18 @@ func NewRingClient(cc grpc.ClientConnInterface) RingClient {
 	return &ringClient{cc}
 }
 
-func (c *ringClient) Ring(ctx context.Context, in *Send, opts ...grpc.CallOption) (*Ack, error) {
+func (c *ringClient) RequestAccess(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Ack, error) {
 	out := new(Ack)
-	err := c.cc.Invoke(ctx, "/token.Ring/ring", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/token.Ring/RequestAccess", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ringClient) Reply(ctx context.Context, in *Reply, opts ...grpc.CallOption) (*AckReply, error) {
+	out := new(AckReply)
+	err := c.cc.Invoke(ctx, "/token.Ring/reply", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +52,8 @@ func (c *ringClient) Ring(ctx context.Context, in *Send, opts ...grpc.CallOption
 // All implementations must embed UnimplementedRingServer
 // for forward compatibility
 type RingServer interface {
-	Ring(context.Context, *Send) (*Ack, error)
+	RequestAccess(context.Context, *Request) (*Ack, error)
+	Reply(context.Context, *Reply) (*AckReply, error)
 	mustEmbedUnimplementedRingServer()
 }
 
@@ -50,8 +61,11 @@ type RingServer interface {
 type UnimplementedRingServer struct {
 }
 
-func (UnimplementedRingServer) Ring(context.Context, *Send) (*Ack, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Ring not implemented")
+func (UnimplementedRingServer) RequestAccess(context.Context, *Request) (*Ack, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestAccess not implemented")
+}
+func (UnimplementedRingServer) Reply(context.Context, *Reply) (*AckReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Reply not implemented")
 }
 func (UnimplementedRingServer) mustEmbedUnimplementedRingServer() {}
 
@@ -66,20 +80,38 @@ func RegisterRingServer(s grpc.ServiceRegistrar, srv RingServer) {
 	s.RegisterService(&Ring_ServiceDesc, srv)
 }
 
-func _Ring_Ring_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Send)
+func _Ring_RequestAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RingServer).Ring(ctx, in)
+		return srv.(RingServer).RequestAccess(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/token.Ring/ring",
+		FullMethod: "/token.Ring/RequestAccess",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RingServer).Ring(ctx, req.(*Send))
+		return srv.(RingServer).RequestAccess(ctx, req.(*Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Ring_Reply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Reply)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RingServer).Reply(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/token.Ring/reply",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RingServer).Reply(ctx, req.(*Reply))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -92,8 +124,12 @@ var Ring_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*RingServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ring",
-			Handler:    _Ring_Ring_Handler,
+			MethodName: "RequestAccess",
+			Handler:    _Ring_RequestAccess_Handler,
+		},
+		{
+			MethodName: "reply",
+			Handler:    _Ring_Reply_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
