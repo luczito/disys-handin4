@@ -1,0 +1,51 @@
+2022/11/15 11:59:42 Node created on port: 5000
+2022/11/15 11:59:42 Trying to dial: 5001
+2022/11/15 11:59:44 Node created on port: 5001
+2022/11/15 11:59:44 Trying to dial: 5000
+2022/11/15 11:59:44 Succes connecting to: 5000
+2022/11/15 11:59:44 Trying to dial: 5002
+2022/11/15 11:59:45 Succes connecting to: 5001
+2022/11/15 11:59:45 Trying to dial: 5002
+2022/11/15 11:59:47 Node created on port: 5002
+2022/11/15 11:59:47 Trying to dial: 5000
+2022/11/15 11:59:47 Succes connecting to: 5000
+2022/11/15 11:59:47 Trying to dial: 5001
+2022/11/15 11:59:47 Succes connecting to: 5001
+2022/11/15 11:59:47 5002 is connected to 2 other nodes
+2022/11/15 11:59:47 Succes connecting to: 5002
+2022/11/15 11:59:47 5000 is connected to 2 other nodes
+2022/11/15 11:59:48 Succes connecting to: 5002
+2022/11/15 11:59:48 5001 is connected to 2 other nodes
+2022/11/15 11:59:57 5000 is requesting access to critical section...
+2022/11/15 11:59:57 5000 is sending request to all other nodes. Missing 2 replies.
+2022/11/15 11:59:57 5001 recieved a request from 5000.
+2022/11/15 11:59:57 5001 is sending a reply to 5000
+2022/11/15 11:59:57 5000 recieved a reply. Missing 1 replies.
+2022/11/15 11:59:57 5002 recieved a request from 5000.
+2022/11/15 11:59:57 5002 is sending a reply to 5000
+2022/11/15 11:59:57 5000 recieved a reply. All requests has been replied.
+2022/11/15 11:59:57 5000 recieved a reply. Missing 0 replies.
+2022/11/15 11:59:57 Critical service accessed by 5000
+2022/11/15 12:00:02 5000 is done with the critical service, releasing.
+2022/11/15 12:00:11 5001 is requesting access to critical section...
+2022/11/15 12:00:11 5001 is sending request to all other nodes. Missing 2 replies.
+2022/11/15 12:00:11 5000 recieved a request from 5001.
+2022/11/15 12:00:11 5000 is sending a reply to 5001
+2022/11/15 12:00:11 5001 recieved a reply. Missing 1 replies.
+2022/11/15 12:00:11 5002 recieved a request from 5001.
+2022/11/15 12:00:11 5002 is sending a reply to 5001
+2022/11/15 12:00:11 5001 recieved a reply. All requests has been replied.
+2022/11/15 12:00:11 5001 recieved a reply. Missing 0 replies.
+2022/11/15 12:00:11 Critical service accessed by 5001
+2022/11/15 12:00:12 5002 is requesting access to critical section...
+2022/11/15 12:00:12 5002 is sending request to all other nodes. Missing 2 replies.
+2022/11/15 12:00:12 5000 recieved a request from 5002.
+2022/11/15 12:00:12 5000 is sending a reply to 5002
+2022/11/15 12:00:12 5002 recieved a reply. Missing 1 replies.
+2022/11/15 12:00:12 5001 recieved a request from 5002.
+2022/11/15 12:00:12 5001 is queueing a request from 5002
+2022/11/15 12:00:16 5001 is done with the critical service, releasing.
+2022/11/15 12:00:16 5002 recieved a reply. All requests has been replied.
+2022/11/15 12:00:16 5002 recieved a reply. Missing 0 replies.
+2022/11/15 12:00:16 Critical service accessed by 5002
+2022/11/15 12:00:21 5002 is done with the critical service, releasing.
