@@ -12,6 +12,7 @@ To request access to the critical service you simply have to press enter (or typ
 
 If multiple nodes requests access at once they will be put in a queue.
 
+
 ## Notes about the main.go file
 
 Each node has to act as server and client at the same time. In the `main()` function, we both setup the node as a server, listening to its own port, and also set it up as a client, connecting to the other peers as servers. Both of these are necessary for the whole architecture to work. 

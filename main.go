@@ -37,18 +37,21 @@ type node struct {
 
 // request function to request access to the critical service
 func (n *node) RequestAccess(ctx context.Context, req *token.Request) (*token.Ack, error) {
-	log.Printf("Request from %v recieved.", req.Id)
+	log.Printf("%v recieved a request from %v.\n", n.id, req.Id)
+	fmt.Println("Recieved a request")
 
 	//checks if state is higher, if equal check id. (This is the hierarchy)
 	if n.state == HELD || (n.state == REQUESTED && (n.id > req.Id)) {
-		log.Printf("Queueing request from %v\n", req.Id)
+		log.Printf("%v is queueing a request from %v\n", n.id, req.Id)
+		fmt.Println("Queueing request")
 		n.queue = append(n.queue, req.Id)
 	} else {
 		if n.state == REQUESTED {
 			n.requests++
 			n.clients[req.Id].RequestAccess(ctx, &token.Request{Id: n.id})
 		}
-		log.Printf("Sending reply to %v", req.Id)
+		log.Printf("%v is sending a reply to %v\n", n.id, req.Id)
+		fmt.Println("Sending reply")
 		n.clients[req.Id].Reply(ctx, &token.Reply{})
 	}
 	reply := &token.Ack{}
@@ -60,27 +63,30 @@ func (n *node) Reply(ctx context.Context, req *token.Reply) (*token.AckReply, er
 	n.requests--
 
 	if n.requests == 0 {
-		log.Println("Recieved reply. All requests replied.")
-		go n.CriticalSection()
+		log.Printf("%v recieved a reply. All requests has been replied to.\n", n.id)
+		fmt.Println("Recieved reply, all request have been replied to")
+		go n.CriticalService()
 	}
 
-	log.Printf("Recieved reply. Missing %d replies.\n", n.requests)
+	log.Printf("%v recieved a reply. Missing %v replies.\n", n.id, n.requests)
+	fmt.Println("Recieved a reply, waiting for the remaining replies.")
 
 	rep := &token.AckReply{}
 	return rep, nil
 }
 
-// critical section emulated in this method. takes 5 seconds to exec
-func (n *node) CriticalSection() {
-	log.Println("Critical Section accessed")
-
+// critical service emulated in this method. takes 5 seconds to exec
+func (n *node) CriticalService() {
+	log.Printf("Critical service accessed by %v\n", n.id)
+	fmt.Println("Critical service accessed")
 	n.state = HELD
 
 	time.Sleep(5 * time.Second)
 
 	n.state = RELEASED
 
-	log.Println("Critical Section done, releasing")
+	log.Printf("%v is done with the critical service, releasing.\n", n.id)
+	fmt.Println("Done with the critical service")
 
 	n.ReplyQueue()
 }
@@ -95,13 +101,14 @@ func (n *node) sendRequestToAll() {
 
 	n.requests = len(n.clients)
 
-	log.Printf("Sending request to all other nodes. Missing %d replies.\n", n.requests)
+	log.Printf("%v is sending request to all other nodes. Missing %d replies.\n", n.id, n.requests)
+	fmt.Println("Sending request to all other nodes")
 
 	for id, client := range n.clients {
 		_, err := client.RequestAccess(n.ctx, request)
 
 		if err != nil {
-			log.Printf("Something went wrong with node: %v, error: %v", id, err)
+			log.Printf("Something went wrong with node: %v, error: %v\n", id, err)
 		}
 	}
 }
@@ -114,13 +121,20 @@ func (n *node) ReplyQueue() {
 		_, err := n.clients[id].Reply(n.ctx, reply)
 
 		if err != nil {
-			log.Printf("Something went wrong\n", id)
+			log.Printf("Something went wrong with node %v, error: %v\n", id, err)
 		}
 	}
 	n.queue = make([]int32, 0)
 }
 
 func main() {
+	f, err := os.OpenFile("log.server", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v\n", err)
+	}
+	defer f.Close()
+	log.SetOutput(f)
+
 	flag.Parse() //set port with -port in the commandline when running the program
 
 	ctx_, cancel := context.WithCancel(context.Background())
@@ -141,10 +155,11 @@ func main() {
 	//creates listener on port
 	list, err := net.Listen("tcp", fmt.Sprintf(":%v", port))
 	if err != nil {
-		log.Fatalf("Failed to listen on port: %v", err)
+		log.Fatalf("Failed to listen on port: %v\n", err)
 	}
 
 	log.Printf("Node created on port: %d\n", n.id)
+	fmt.Printf("Node created on port %v\n", n.id)
 
 	grpcServer := grpc.NewServer()
 	token.RegisterRingServer(grpcServer, n)
@@ -152,7 +167,7 @@ func main() {
 	//serve on the listener
 	go func() {
 		if err := grpcServer.Serve(list); err != nil {
-			log.Fatalf("failed to server %v", err)
+			log.Fatalf("failed to server %v\n", err)
 		}
 	}()
 
@@ -169,7 +184,7 @@ func main() {
 		conn, err := grpc.Dial(fmt.Sprintf(":%v", nodePort), grpc.WithInsecure(), grpc.WithBlock())
 
 		if err != nil {
-			log.Fatalf("Could not connect: %s", err)
+			log.Fatalf("Could not connect: %v\n", err)
 		}
 
 		defer conn.Close()
@@ -178,13 +193,15 @@ func main() {
 		n.clients[nodePort] = c
 	}
 
-	log.Printf("I am connected to %v other nodes", len(n.clients))
+	log.Printf("%v is connected to %v other nodes\n", n.id, len(n.clients))
+	fmt.Printf("%v is connected to %v other nodes\n", n.id, len(n.clients))
 
 	scanner := bufio.NewScanner(os.Stdin)
 
 	//scanner that requests access from the given node when something is written in the terminal.
 	for scanner.Scan() {
-		log.Println("Requesting access to critical section...")
+		log.Printf("%v is requesting access to critical service...\n", n.id)
+		fmt.Println("Requesting acccess to the critical service")
 		n.sendRequestToAll()
 	}
 }
